@@ -47,9 +47,29 @@ const addPersona = async (req, res) => {
     
 };
 
-const deletePersona = async (req, res) => {
+const updatePersona = async (req, res) => {
     try{
         console.log(req.params);
+        const { id } = req.params;
+        const { nombre, dni, fechanacimiento} = req.body;
+
+        if (id===undefined || nombre===undefined || dni===undefined || fechanacimiento===undefined){
+            res.status(400).json({message:"Bad request. Please fill all the fields."});
+        }
+
+        const persona={ id, nombre, dni, fechanacimiento };
+        const connection = await getConnection();
+        const result = await connection.query("UPDATE persona SET WHERE id = ?", [persona, id]);
+        res.json(result);
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+    
+};
+
+const deletePersona = async (req, res) => {
+    try{
         const { id } = req.params;
         const connection = await getConnection();
         const result = await connection.query("DELETE FROM persona WHERE id = ?", id);
@@ -65,5 +85,6 @@ export const methods = {
     getPersonas,
     getPersona,
     addPersona,
+    updatePersona,
     deletePersona
 };
